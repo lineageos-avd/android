@@ -36,6 +36,12 @@ To rebuild only Android using the matching historical kernels, replace kernel bu
 
 Public PRs run manifest and script validation on GitHub-hosted runners. Only trusted `avd-main` commits and `avd-v*` tags use the dedicated `lineageos-avd-android` self-hosted runner on Lab. The workflow builds both kernels before both system images and retains checksums and locked source manifests. Version tags publish prereleases. The download catalog remains on the imported revision until a newly built pair has completed boot validation.
 
+## Local object references
+
+On Lab, read-only Docker copies of the original Git object pools live under `~/Projects/lineageos-avd-build/source-cache/{kernel,system}`. Source builds borrow objects from these independent copies using standard `repo --reference` and Git alternates; they never borrow directly from or write to the original Ubuntu trees. `tools/verify-reference.py KIND CACHE_PATH` checks every original pinned commit, carries over original per-project shallow boundaries, creates refs for fetch negotiation, and supplies aliases for renamed forks. Keep the reference cache while dependent workspaces use it.
+
+A verified cache marker enables this optimization automatically; ordinary checkouts without a cache still fetch public sources. `SOURCE_REFERENCE_ROOT` overrides the parent cache directory. The optional `AOSP_MIRROR` transport is scoped to the sync process, retains exact manifest SHAs, and retries the original Google remote on failure. Interrupted first clones are repaired at their pinned revision so repo does not accidentally download complete branch histories.
+
 ## Boot verification
 
 Use `python3 tools/smoke.py IMAGE.zip --emulator /path/to/emulator --adb /path/to/adb --output evidence` on a host matching the guest ABI. It creates an isolated temporary AVD and private ADB server, requires hardware acceleration, waits for cold boot, checks the kernel release and bundled Manager, verifies that the Manager UI reports **Working**, and saves PNG/JSON evidence. All temporary guest storage and processes are cleaned up. The x86_64 check also verifies the imported syscall-hardening command-line setting. The script defaults to a 600-second boot deadline.
