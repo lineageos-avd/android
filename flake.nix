@@ -1,7 +1,7 @@
 {
   description = "Pinned LineageOS AVD system and KernelSU kernel build environment";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils }:
