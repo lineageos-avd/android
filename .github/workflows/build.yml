@@ -38,7 +38,6 @@ jobs:
         run: |
           result/bin/lineageos-build-env scripts/build-system.sh "$HOME/Projects/lineageos-avd-build/android/system" "$GITHUB_WORKSPACE/artifacts"
           cp "$HOME/Projects/lineageos-avd-build/android/kernel/manifest.lock.xml" artifacts/kernel-manifest.xml
-          cp import/lab-r3/sources.json artifacts/source-provenance.json
       - uses: actions/upload-artifact@v4
         with:
           name: lineageos-avd-${{ github.sha }}
