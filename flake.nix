@@ -12,6 +12,7 @@
         };
       } // nixpkgs.lib.optionalAttrs (nixpkgs.lib.hasSuffix "linux" system) {
         packages.android-env = pkgs.callPackage ./nix/android-fhs.nix { };
+        packages.runner-env = pkgs.callPackage ./nix/runner-fhs.nix { };
         packages.default = self.packages.${system}.android-env;
       });
 }
