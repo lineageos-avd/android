@@ -36,6 +36,10 @@ To rebuild only Android using the matching historical kernels, replace kernel bu
 
 Public PRs run manifest and script validation on GitHub-hosted runners. Only trusted `avd-main` commits and `avd-v*` tags use the dedicated `lineageos-avd-android` self-hosted runner on Lab. The workflow builds both kernels before both system images and retains checksums and locked source manifests. Version tags publish prereleases. The download catalog remains on the imported revision until a newly built pair has completed boot validation.
 
+## Boot verification
+
+Use `python3 tools/smoke.py IMAGE.zip --emulator /path/to/emulator --adb /path/to/adb --output evidence` on a host matching the guest ABI. It creates an isolated temporary AVD and private ADB server, requires hardware acceleration, waits for cold boot, checks the kernel release and bundled Manager, verifies that the Manager UI reports **Working**, and saves PNG/JSON evidence. All temporary guest storage and processes are cleaned up. The x86_64 check also verifies the imported syscall-hardening command-line setting. The script defaults to a 600-second boot deadline.
+
 ## Licenses
 
 Android, LineageOS, the Linux kernel, KernelSU-Next and bundled software retain their original licenses; see each pinned source project's license and NOTICE files. The Linux/KernelSU modifications and build scripts needed to produce the kernel are published in the linked forks and pinned kernel manifest. KernelSU Manager is preserved byte-for-byte from the official v3.3.0 (33214) artifact. This repository does not redistribute Google proprietary system images.
