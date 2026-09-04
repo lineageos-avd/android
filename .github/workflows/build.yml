@@ -27,12 +27,13 @@ jobs:
         run: python3 scripts/validate.py
       - name: Build Nix FHS environment
         run: nix build .#android-env --out-link result
-      - name: Sync exact system and kernel sources
+      - name: Sync exact kernel sources
         run: |
           result/bin/lineageos-build-env scripts/sync.sh kernel "$HOME/Projects/lineageos-avd-build/android/kernel" "$GITHUB_SHA"
-          result/bin/lineageos-build-env scripts/sync.sh system "$HOME/Projects/lineageos-avd-build/android/system" "$GITHUB_SHA"
       - name: Build signed kernel and module pairs
         run: result/bin/lineageos-build-env scripts/build-kernels.sh "$HOME/Projects/lineageos-avd-build/android/kernel"
+      - name: Sync exact system sources
+        run: result/bin/lineageos-build-env scripts/sync.sh system "$HOME/Projects/lineageos-avd-build/android/system" "$GITHUB_SHA"
       - name: Stage matching kernel and module pairs
         run: python3 scripts/stage-kernels.py "$HOME/Projects/lineageos-avd-build/android/system" --kernel-workspace "$HOME/Projects/lineageos-avd-build/android/kernel"
       - name: Build both Android guest architectures
