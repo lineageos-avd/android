@@ -1,0 +1,62 @@
+name: Build LineageOS AVD images
+on:
+  workflow_dispatch:
+  push:
+    branches: [avd-main]
+    paths: ['manifests/**', 'scripts/**', 'nix/**', 'flake.*', '.github/workflows/build.yml']
+    tags: ['avd-v*']
+permissions:
+  contents: read
+concurrency:
+  group: lab-system-build
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'lineageos-avd/android' && (github.ref == 'refs/heads/avd-main' || startsWith(github.ref, 'refs/tags/avd-v'))
+    runs-on: [self-hosted, Linux, X64, lineageos-avd-android]
+    timeout-minutes: 2880
+    env:
+      BUILD_JOBS: '32'
+      SYNC_JOBS: '16'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate pinned inputs
+        run: python3 scripts/validate.py
+      - name: Build Nix FHS environment
+        run: nix build .#android-env --out-link result
+      - name: Sync exact system and kernel sources
+        run: |
+          result/bin/lineageos-build-env scripts/sync.sh kernel "$HOME/Projects/lineageos-avd-build/android/kernel" "$GITHUB_SHA"
+          result/bin/lineageos-build-env scripts/sync.sh system "$HOME/Projects/lineageos-avd-build/android/system" "$GITHUB_SHA"
+      - name: Build signed kernel and module pairs
+        run: result/bin/lineageos-build-env scripts/build-kernels.sh "$HOME/Projects/lineageos-avd-build/android/kernel"
+      - name: Stage matching kernel and module pairs
+        run: python3 scripts/stage-kernels.py "$HOME/Projects/lineageos-avd-build/android/system" --kernel-workspace "$HOME/Projects/lineageos-avd-build/android/kernel"
+      - name: Build both Android guest architectures
+        run: |
+          result/bin/lineageos-build-env scripts/build-system.sh "$HOME/Projects/lineageos-avd-build/android/system" "$GITHUB_WORKSPACE/artifacts"
+          cp "$HOME/Projects/lineageos-avd-build/android/kernel/manifest.lock.xml" artifacts/kernel-manifest.xml
+          cp import/lab-r3/sources.json artifacts/source-provenance.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lineageos-avd-${{ github.sha }}
+          path: artifacts/
+          compression-level: 0
+          retention-days: 7
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/avd-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Publish built images and exact source manifests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" artifacts/* --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease --title "$GITHUB_REF_NAME" --notes 'Preview images built by the pinned Nix/Lab workflow. Exact system and kernel source manifests accompany these artifacts.'

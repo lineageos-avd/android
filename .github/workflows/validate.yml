@@ -1,0 +1,15 @@
+name: Validate source manifests
+on:
+  push:
+    branches: [avd-main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/validate.py
+      - run: bash -n scripts/*.sh
+      - run: python3 -m py_compile scripts/*.py

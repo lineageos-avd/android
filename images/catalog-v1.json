@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "images": [
+    {
+      "id": "lineage-23.2-api36.1-arm64-v8a",
+      "source_id": "lineageos-avd",
+      "name": "LineageOS 23.2 + KernelSU-Next",
+      "revision": "3",
+      "api": {
+        "major": 36,
+        "minor": 1
+      },
+      "abi": "arm64-v8a",
+      "url": "https://github.com/lineageos-avd/android/releases/download/lab-import-r3/lineage-23.2-ranchu-arm64-v8a-linux-6.12-ksunext-v3.3.0.zip",
+      "size": 1072152163,
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "1315bba6b843e7125d4304cddec5c183034e42860d9ece1d26992972ad612d8b"
+      },
+      "license": "Open-source components retain their upstream licenses, including Apache-2.0 and GPL-2.0-only. Corresponding source and notices: https://github.com/lineageos-avd/android/tree/avd-main/import/lab-r3",
+      "license_id": "lineageos-open-source",
+      "min_engine_version": "36.1.0",
+      "channel": "preview"
+    },
+    {
+      "id": "lineage-23.2-api36.1-x86_64",
+      "source_id": "lineageos-avd",
+      "name": "LineageOS 23.2 + KernelSU-Next",
+      "revision": "3",
+      "api": {
+        "major": 36,
+        "minor": 1
+      },
+      "abi": "x86_64",
+      "url": "https://github.com/lineageos-avd/android/releases/download/lab-import-r3/lineage-23.2-ranchu-x86_64-linux-6.12-ksunext-v3.3.0.zip",
+      "size": 1112802649,
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "bae729674db4b03be10ffb33282fe35b23d02e7e4a4b291ce13758207a99a5df"
+      },
+      "license": "Open-source components retain their upstream licenses, including Apache-2.0 and GPL-2.0-only. Corresponding source and notices: https://github.com/lineageos-avd/android/tree/avd-main/import/lab-r3",
+      "license_id": "lineageos-open-source",
+      "min_engine_version": "36.1.0",
+      "channel": "preview"
+    }
+  ]
+}
