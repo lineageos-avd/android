@@ -30,7 +30,7 @@ result/bin/lineageos-build-env scripts/build-system.sh "$HOME/Projects/avd/syste
 
 To rebuild only Android using the matching historical kernels, replace kernel building/staging with `python3 scripts/stage-kernels.py SYSTEM_WORKSPACE --imported`. The script verifies the pinned SHA256 and replaces complete kernel/module directories, preserving all signatures and deleted-module state. It rejects unsafe archive entries and unsigned GKI modules. It does not copy private module-signing keys.
 
-`BUILD_JOBS` defaults to 32 and `SYNC_JOBS` to 16. `sync.sh` accepts an optional third argument to pin the manifest repository itself to an exact commit. Check out the desired integration commit and pass it for archival reproduction.
+`BUILD_JOBS` defaults to 32 and `SYNC_JOBS` to 16. Checkouts use shallow history at the exact pinned commits; complete history remains available in the upstream and fork repositories. The repo bootstrap uses the official GerritCodeReview GitHub mirror at signed v2.66.1 and checks its exact commit. `sync.sh` accepts an optional third argument to pin the manifest repository itself to an exact commit. Check out the desired integration commit and pass it for archival reproduction.
 
 ## Actions
 
