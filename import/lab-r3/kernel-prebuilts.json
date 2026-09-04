@@ -1,0 +1,10 @@
+{
+  "url": "https://github.com/lineageos-avd/android/releases/download/lab-import-r3/kernel-prebuilts-lab-import-r3.tar.gz",
+  "sha256": "38b254907df41faf0893c9df937fbde87ef5ff3671629563e94e5d92cc69f9d7",
+  "size": 55922336,
+  "target": "prebuilts/qemu-kernel",
+  "directories": [
+    "arm64/6.12",
+    "x86_64/6.12"
+  ]
+}

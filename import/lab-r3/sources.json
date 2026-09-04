@@ -1,0 +1,26 @@
+{
+  "android_device_generic_goldfish": {
+    "upstream": "7b227068cbf159c07096bd1c5ec5c479c9a430a2",
+    "import": "4260709a32a4b52bc6f9e5832cfbfba3c2e87096",
+    "head": "4260709a32a4b52bc6f9e5832cfbfba3c2e87096",
+    "files": 3
+  },
+  "android_vendor_lineage": {
+    "upstream": "e024cea5081666b22da966d51ae966a288a6a27b",
+    "import": "a23e00205dc406bdeffac00e0a30b277a1d2f353",
+    "head": "240b2206a82a01f2b4d8494d07c61aa4c1705834",
+    "files": 16
+  },
+  "android_kernel_common": {
+    "upstream": "5dd528d5e93a3e192a62551e3443d69e52282197",
+    "import": "4b1d69bc2dc27fca461db9640cde02a60ec955dc",
+    "head": "9cd56037eb996c1d5ada216e2fdc8be7f5099a9d",
+    "files": 13
+  },
+  "KernelSU-Next": {
+    "upstream": "3b18216f71df189ab3d1b1ce0bdb21be1268e771",
+    "import": "ca3201a2baf2fb8dc07a56f0560eba50db0bbeeb",
+    "head": "ca3201a2baf2fb8dc07a56f0560eba50db0bbeeb",
+    "files": 3
+  }
+}
