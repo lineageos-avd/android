@@ -17,7 +17,8 @@ jobs:
     timeout-minutes: 2880
     env:
       BUILD_JOBS: '32'
-      SYNC_JOBS: '16'
+      SYNC_JOBS: '2'
+      AOSP_MIRROR: https://mirrors.tuna.tsinghua.edu.cn/git/AOSP
     steps:
       - uses: actions/checkout@v4
         with:
