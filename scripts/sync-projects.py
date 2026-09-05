@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 from pathlib import Path
 import subprocess
+from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
 
 
@@ -25,6 +26,7 @@ def recover_incomplete_checkouts(source, manifest, env, direct_env, jobs):
     only the pinned snapshot, then refetch that snapshot when it is incomplete.
     """
     default_remote = manifest.find('default').get('remote')
+    remotes = {remote.get('name'): remote.get('fetch') for remote in manifest.findall('remote')}
 
     def recover(project):
         path = project.get('path', project.get('name'))
@@ -45,9 +47,12 @@ def recover_incomplete_checkouts(source, manifest, env, direct_env, jobs):
         if complete():
             return
         remote = project.get('remote', default_remote)
+        # Copied per-project configs may still name the original upstream remote.
+        # Resolve the desired canonical URL from the pinned manifest instead.
+        fetch_target = urljoin(remotes[remote].rstrip('/') + '/', project.get('name')) if remote in remotes else remote
         have_commit = subprocess.run(['git', 'cat-file', '-e', revision + '^{commit}'], cwd=source, env=probe_env, capture_output=True).returncode == 0
         command = ['git', 'fetch', *(['--refetch'] if have_commit else []), '--depth=1', '--no-tags', '--no-auto-gc',
-                   '--recurse-submodules=no', remote, revision]
+                   '--recurse-submodules=no', fetch_target, revision]
         fetch_env = dict(env, GIT_DIR=str(gitdir), GIT_OBJECT_DIRECTORY=str(objdir))
         print(f'Recovering incomplete pinned snapshot: {path} {revision}', flush=True)
         try:
