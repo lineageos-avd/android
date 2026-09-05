@@ -45,6 +45,6 @@ def main():
  while not rpc('getStatus',{}).get('booted'):
   if time.monotonic()>deadline:raise RuntimeError('Guest did not recover after snapshot restore')
   time.sleep(0.5)
- result={'status':'passed','engine_status':{key:status[key] for key in ('version','booted','vmConfig') if key in status},'grpc_authenticated':True,'clipboard_unicode':True,'rgba_width':fmt['width'],'rgba_height':fmt['height'],'rgba_bytes':len(pixels),'png_sha256':hashlib.sha256(png).hexdigest(),'snapshot':snapshot,'snapshot_descriptor':str(descriptor),'kernel':restored_kernel}
+ result={'status':'passed','engine_status':{key:status[key] for key in ('version','booted','vmConfig') if key in status},'grpc_authenticated':True,'clipboard_unicode':True,'rgba_width':fmt['width'],'rgba_height':fmt['height'],'rgba_bytes':len(pixels),'png_sha256':hashlib.sha256(png).hexdigest(),'snapshot':snapshot,'snapshot_descriptor':str(descriptor),'kernel':restored_kernel,'guest_online_cpus':adb('shell','cat','/sys/devices/system/cpu/online')}
  (a.output/'grpc-snapshot-result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

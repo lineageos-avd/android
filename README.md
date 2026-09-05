@@ -2,7 +2,7 @@
 
 LineageOS 23.2 / Android API 36.1 system images for Google Android Emulator, with Linux 6.12 and KernelSU-Next v3.3.0. This repository is a fork of the LineageOS manifest repository; `avd-main` adds pinned source integration, releases and Nix build automation.
 
-[Imported revision 3 images](https://github.com/lineageos-avd/android/releases/tag/lab-import-r3) are the existing Lab-Ubuntu build, uploaded without changing their bytes. [Emulator Hub](https://github.com/moeleak/emulator-hub) consumes [`images/catalog-v1.json`](images/catalog-v1.json). Use ARM64 guests on Apple Silicon and x86_64 guests on Intel/AMD hosts. API 36.1 is preserved as a major/minor version.
+[Revision 4 images](https://github.com/lineageos-avd/android/releases/tag/lineage-23.2-r4) are freshly built from the pinned public forks and validated on Linux/KVM and macOS/HVF. [Imported revision 3](https://github.com/lineageos-avd/android/releases/tag/lab-import-r3) remains available with its original ZIP bytes and checksums. [Emulator Hub](https://github.com/moeleak/emulator-hub) consumes [`images/catalog-v1.json`](images/catalog-v1.json). Use ARM64 guests on Apple Silicon and x86_64 guests on Intel/AMD hosts. API 36.1 is preserved as a major/minor version.
 
 ## Sources and changes
 
@@ -37,6 +37,8 @@ To rebuild only Android using the matching historical kernels, replace kernel bu
 Public PRs run manifest and script validation on GitHub-hosted runners. Only trusted `avd-main` commits and `avd-v*` tags use the dedicated `lineageos-avd-android` self-hosted runner on Lab. The workflow builds both kernels before both system images and retains checksums and locked source manifests. Version tags publish prereleases. The download catalog remains on the imported revision until a newly built pair has completed boot validation.
 
 Both revision 3 ABIs were tested with source-built emulator **35.3.8.0**: x86_64 on Linux/KVM and ARM64 on macOS/HVF. Cold boot, Manager **Working**, authenticated gRPC display/clipboard and snapshot save/load all passed. Their catalog minimum is therefore 35.3.8. See [Linux evidence](import/lab-r3/validation-linux-x86_64.json), [macOS ARM64 evidence](import/lab-r3/validation-macos-arm64.json), and the corresponding captured Manager screens in the same directory.
+
+Revision 4 passed the same complete checks using the actual published SDK ZIPs for both tested hosts, including guest CPU online count, KernelSU Manager **Working**, authenticated gRPC, Unicode clipboard, and snapshot save/load with ADB reconnection. [Combined revision 4 build and validation evidence](images/revision-4-validation.json) records package hashes and exact source commits. The default catalog now selects revision 4; already-created instances remain pinned to their prior image.
 
 ## Local object references
 

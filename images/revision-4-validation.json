@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "release": "https://github.com/lineageos-avd/android/releases/tag/lineage-23.2-r4",
+  "build": {
+    "schema_version": 1,
+    "revision": 4,
+    "integration_commit": "eb3911f215f5dc360ac8f2f5fd146cfc594ae9db",
+    "workflow": "https://github.com/lineageos-avd/android/actions/runs/33934684016",
+    "workflow_conclusion": "success",
+    "nixpkgs_revision": "a5cc6f2c37bf518436dc8d1c288ccd0c43c2f4c4",
+    "kernel_revision": "9cd56037eb996c1d5ada216e2fdc8be7f5099a9d",
+    "kernelsu_revision": "ca3201a2baf2fb8dc07a56f0560eba50db0bbeeb",
+    "goldfish_revision": "4260709a32a4b52bc6f9e5832cfbfba3c2e87096",
+    "vendor_revision": "9e89167f63830a3295176eabeb796ced8e071e88",
+    "system_manifest": "system-manifest.xml",
+    "kernel_manifest": "kernel-manifest.xml",
+    "image_api": {
+      "major": 36,
+      "minor": 1
+    },
+    "validated_source_engine_version": "35.3.8.0",
+    "kernel_prebuilts_sha256": "c63c637e7cdcd0d45eb74cdbda4b5eb566fd07e176fd9c53658f3a7036abc145",
+    "notes": "Freshly built from pinned public forks in independent Nix/Lab workspaces. Original Lab revision 3 ZIPs remain unchanged. Kernel signing material is not included; the matching signed kernels and modules are included."
+  },
+  "arm64": {
+    "image_revision": 4,
+    "abi": "arm64-v8a",
+    "api": "36.1",
+    "image_sha256": "9340525e9861a7b329fe341c5dda05ef89e2ba1b05584810afa784c05598694d",
+    "host": "macOS arm64",
+    "hypervisor": "HVF",
+    "graphics": "swiftshader",
+    "engine_version": "Android emulator version 35.3.8.0 (build_id 36.1-hub.1) (CL:N/A)",
+    "engine_package_sha256": "66fbf4dd7b80915e0340cdd1cbd8be82670a77c71def7a52bb27d880959f146c",
+    "kernel": "6.12.89-android16-6-ksunext-v3.3.0-4k",
+    "manager_kernel_status": "Working",
+    "guest_online_cpus": "0-3",
+    "boot_seconds": 30.4,
+    "authenticated_grpc": true,
+    "unicode_clipboard": true,
+    "rgba": [
+      288,
+      640,
+      737280
+    ],
+    "png_sha256": "8c496af46b15ddd1d11bc4242416642a1cdfe7abf49ec6c942591e62931c8eb5",
+    "snapshot_save_load_and_adb_reconnect": true
+  },
+  "x86_64": {
+    "image_revision": 4,
+    "abi": "x86_64",
+    "api": "36.1",
+    "image_sha256": "a877f5b54c955feaa1635967f02cb1f1ea7feba97eb9770abeb2f54c9fab4c8d",
+    "host": "Linux x86_64",
+    "hypervisor": "KVM",
+    "graphics": "swiftshader",
+    "engine_version": "Android emulator version 35.3.8.0 (build_id 36.1-hub.1) (CL:N/A)",
+    "engine_package_sha256": "95f1eb40caa19fd1b738423b9ba98892abc4d2cb13a96bb831b01ed3bfbdc6ab",
+    "kernel": "6.12.89-android16-6-ksunext-v3.3.0",
+    "manager_kernel_status": "Working",
+    "guest_online_cpus": "0-3",
+    "syscall_hardening": "Syscall hardening: Disabled",
+    "boot_seconds": 46.9,
+    "authenticated_grpc": true,
+    "unicode_clipboard": true,
+    "rgba": [
+      288,
+      640,
+      737280
+    ],
+    "png_sha256": "41cb7a996b589254b6e11d27408495105fc7c3971b38e0171148f66e0ee4c7cf",
+    "snapshot_save_load_and_adb_reconnect": true
+  }
+}
