@@ -8,6 +8,7 @@ import platform
 import shutil
 import socket
 import subprocess
+import sys
 import tempfile
 import time
 import zipfile
@@ -38,7 +39,11 @@ def main():
     parser.add_argument('--adb', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--timeout', type=int, default=600)
+    parser.add_argument('--grpcurl', type=Path, help='Also verify authenticated gRPC and snapshot save/load')
+    parser.add_argument('--proto', type=Path, help='Matching emulator_controller.proto for --grpcurl')
     args = parser.parse_args()
+    if bool(args.grpcurl) != bool(args.proto):
+        parser.error('--grpcurl and --proto must be supplied together')
     image = args.image.resolve()
     emulator = args.emulator.resolve()
     adb = args.adb.resolve()
@@ -78,7 +83,24 @@ def main():
             }
             (avd / 'config.ini').write_text(''.join(f'{key}={value}\n' for key, value in config.items()))
             env = dict(os.environ, ANDROID_AVD_HOME=str(avd_home), ANDROID_USER_HOME=str(root / 'android-user'))
-            env['ANDROID_SDK_ROOT'] = str(emulator.parent.parent)
+            sdk_root = emulator.parent.parent
+            if not (sdk_root / 'platforms').is_dir():
+                sdk_root = root / 'sdk'
+                (sdk_root / 'platforms').mkdir(parents=True)
+                (sdk_root / 'emulator').symlink_to(emulator.parent, target_is_directory=True)
+                (sdk_root / 'platform-tools').symlink_to(adb.parent, target_is_directory=True)
+            env['ANDROID_SDK_ROOT'] = str(sdk_root)
+            env['ANDROID_HOME'] = str(sdk_root)
+            runtime = root / 'runtime'
+            runtime.mkdir(mode=0o700)
+            env.update(XDG_RUNTIME_DIR=str(runtime), TMPDIR=str(runtime), TMP=str(runtime), TEMP=str(runtime))
+            grpc_args = []
+            grpc_port = None
+            if args.grpcurl:
+                with socket.socket() as sock:
+                    sock.bind(('127.0.0.1', 0))
+                    grpc_port = sock.getsockname()[1]
+                grpc_args = ['-grpc', str(grpc_port), '-grpc-use-token']
             port = port_pair()
             # A dedicated ADB server avoids altering a developer's existing server or devices.
             with socket.socket() as sock:
@@ -100,8 +122,8 @@ def main():
             try:
                 with (output / f'{abi}-emulator.log').open('wb') as log:
                     process = subprocess.Popen([str(emulator), '-avd', 'smoke', '-port', str(port),
-                                                '-no-window', '-no-snapshot', '-no-boot-anim', '-no-audio',
-                                                '-gpu', 'swiftshader', '-accel', 'on'], env=env, stdout=log, stderr=subprocess.STDOUT)
+                                                '-no-window', '-no-snapshot-save', '-no-boot-anim', '-no-audio', '-no-metrics',
+                                                '-gpu', 'swiftshader', '-accel', 'on', *grpc_args], env=env, stdout=log, stderr=subprocess.STDOUT)
                     while time.monotonic() - started < args.timeout:
                         if process.poll() is not None:
                             raise RuntimeError(f'Emulator exited with code {process.returncode}; see log')
@@ -111,13 +133,14 @@ def main():
                         time.sleep(2)
                     else:
                         raise TimeoutError('Android boot did not complete before the deadline')
+                    boot_seconds = round(time.monotonic() - started, 1)
                     kernel = run_adb('shell', 'uname', '-r').stdout.strip()
                     manager = run_adb('shell', 'pm', 'path', 'com.rifsxd.ksunext').stdout.strip()
                     if '6.12.' not in kernel or 'ksunext-v3.3.0' not in kernel:
                         raise ValueError(f'Unexpected kernel release: {kernel}')
                     if '/product/app/KernelSU_Next/' not in manager:
                         raise ValueError(f'Manager is not preinstalled in product: {manager}')
-                    hardening = run_adb('shell', 'cat', '/sys/devices/system/cpu/vulnerabilities/syscall_hardening', check=False).stdout.strip()
+                    hardening = run_adb('shell', 'cat', '/sys/devices/system/cpu/syscall_hardening', check=False).stdout.strip()
                     if abi == 'x86_64' and hardening != 'Syscall hardening: Disabled':
                         raise ValueError(f'Imported syscall boot option was not preserved: {hardening}')
                     diagnostics = {
@@ -142,9 +165,25 @@ def main():
                         raise ValueError('Screenshot was not a PNG')
                     (output / f'{abi}-boot.png').write_bytes(screenshot)
                     evidence = {'abi': abi, 'revision': metadata.get('Pkg.Revision'), 'api': metadata.get('AndroidVersion.ApiLevel'),
-                                'kernel': kernel, 'manager': manager, 'manager_running': bool(manager_pid), 'manager_kernel_status': 'Working', 'syscall_hardening': hardening,
-                                'boot_seconds': round(time.monotonic() - started, 1), 'hardware_acceleration': True,
+                                'kernel': kernel, 'guest_online_cpus': run_adb('shell', 'cat', '/sys/devices/system/cpu/online').stdout.strip(), 'manager': manager, 'manager_running': bool(manager_pid), 'manager_kernel_status': 'Working', 'syscall_hardening': hardening,
+                                'boot_seconds': boot_seconds, 'scenario_seconds': round(time.monotonic() - started, 1), 'hardware_acceleration': True,
                                 'emulator_version': subprocess.check_output([str(emulator), '-version'], env=env, text=True).splitlines()[0]}
+                    if args.grpcurl:
+                        discovery = None
+                        for candidate in runtime.rglob('*.ini'):
+                            fields = dict(line.split('=', 1) for line in candidate.read_text().splitlines() if '=' in line)
+                            if fields.get('grpc.port') == str(grpc_port) and fields.get('grpc.token'):
+                                discovery = candidate
+                                break
+                        if not discovery:
+                            raise RuntimeError('No authenticated discovery file for the private gRPC port')
+                        probe = Path(__file__).with_name('grpc_snapshot_probe.py')
+                        subprocess.run([sys.executable, str(probe), '--discovery', str(discovery),
+                                        '--proto', str(args.proto.resolve()), '--adb', str(adb),
+                                        '--adb-server-port', str(adb_port), '--serial', serial,
+                                        '--avd-dir', str(avd), '--output', str(output),
+                                        '--grpcurl', str(args.grpcurl.resolve())], env=env, check=True)
+                        evidence['grpc_and_snapshots'] = 'passed'
                     (output / f'{abi}-smoke.json').write_text(json.dumps(evidence, indent=2) + '\n')
                     print(json.dumps(evidence, indent=2))
             finally:

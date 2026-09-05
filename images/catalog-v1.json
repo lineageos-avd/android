@@ -40,7 +40,7 @@
       },
       "license": "Open-source components retain their upstream licenses, including Apache-2.0 and GPL-2.0-only. Corresponding source and notices: https://github.com/lineageos-avd/android/tree/avd-main/import/lab-r3",
       "license_id": "lineageos-open-source",
-      "min_engine_version": "36.1.0",
+      "min_engine_version": "35.3.8",
       "channel": "preview"
     }
   ]

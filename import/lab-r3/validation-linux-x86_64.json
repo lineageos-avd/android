@@ -1,0 +1,42 @@
+{
+  "tested_date": "2026-09-05",
+  "host": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "hypervisor": "KVM"
+  },
+  "image": {
+    "name": "lineage-23.2-ranchu-x86_64-linux-6.12-ksunext-v3.3.0.zip",
+    "sha256": "bae729674db4b03be10ffb33282fe35b23d02e7e4a4b291ce13758207a99a5df",
+    "revision": 3,
+    "api": "36.1"
+  },
+  "engine": {
+    "version": "Android emulator version 35.3.8.0 (build_id 36.1-hub.1) (CL:N/A)",
+    "upstream_manifest": "9b25cad8e44cf99246a5ffd579f1c21122865ab5",
+    "qemu_revision": "9f0811e72acfc46edc39d3d0baedd796f7d03309"
+  },
+  "guest": {
+    "kernel": "6.12.89-android16-6-ksunext-v3.3.0",
+    "manager_status": "Working",
+    "syscall_hardening": "Syscall hardening: Disabled",
+    "boot_seconds": 42.9
+  },
+  "checks": {
+    "cold_boot": true,
+    "adb": true,
+    "manager_ui_working": true,
+    "authenticated_grpc": true,
+    "unicode_clipboard_round_trip": true,
+    "rgba_screenshot": {
+      "width": 288,
+      "height": 640,
+      "bytes": 737280
+    },
+    "png_sha256": "348bf7d43ef0af3e748d831bd93c4b95eb443e95c42afc852777912d75c970a8",
+    "snapshot_descriptor_created": true,
+    "snapshot_restore_and_adb_reconnect": true
+  },
+  "sdk_layout": "Isolated SDK root containing platforms/ and references to the actual emulator/ and platform-tools/ directories. No substitute Google image was used.",
+  "scope": "This result establishes x86_64 image compatibility with the tested source-built engine on Linux/KVM. It does not substitute for Windows, Intel macOS or ARM64 runtime verification."
+}
