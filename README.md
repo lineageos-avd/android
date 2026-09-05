@@ -36,6 +36,8 @@ To rebuild only Android using the matching historical kernels, replace kernel bu
 
 Public PRs run manifest and script validation on GitHub-hosted runners. Only trusted `avd-main` commits and `avd-v*` tags use the dedicated `lineageos-avd-android` self-hosted runner on Lab. The workflow builds both kernels before both system images and retains checksums and locked source manifests. Version tags publish prereleases. The download catalog remains on the imported revision until a newly built pair has completed boot validation.
 
+Revision 3 x86_64 was tested on Linux/KVM with the source-built emulator reporting **35.3.8.0**: cold boot, Manager **Working**, authenticated gRPC display/clipboard and snapshot save/load all passed. See [machine-readable evidence](import/lab-r3/validation-linux-x86_64.json) and [the captured Manager screen](import/lab-r3/validation-linux-x86_64.png). The x86_64 catalog minimum is therefore 35.3.8; ARM64 retains its previous requirement until the equivalent source-engine runtime test completes.
+
 ## Local object references
 
 On Lab, read-only Docker copies of the original Git object pools live under `~/Projects/lineageos-avd-build/source-cache/{kernel,system}`. Source builds borrow objects from these independent copies using standard `repo --reference` and Git alternates; they never borrow directly from or write to the original Ubuntu trees. `tools/verify-reference.py KIND CACHE_PATH` checks every original pinned commit, carries over original per-project shallow boundaries, creates refs for fetch negotiation, and supplies aliases for renamed forks. Keep the reference cache while dependent workspaces use it.
