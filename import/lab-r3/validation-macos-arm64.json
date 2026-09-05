@@ -1,14 +1,14 @@
 {
   "tested_date": "2026-09-05",
   "host": {
-    "os": "Linux",
-    "architecture": "x86_64",
-    "hypervisor": "KVM",
+    "os": "macOS",
+    "architecture": "arm64",
+    "hypervisor": "HVF",
     "graphics": "swiftshader"
   },
   "image": {
-    "name": "lineage-23.2-ranchu-x86_64-linux-6.12-ksunext-v3.3.0.zip",
-    "sha256": "bae729674db4b03be10ffb33282fe35b23d02e7e4a4b291ce13758207a99a5df",
+    "name": "lineage-23.2-ranchu-arm64-v8a-linux-6.12-ksunext-v3.3.0.zip",
+    "sha256": "1315bba6b843e7125d4304cddec5c183034e42860d9ece1d26992972ad612d8b",
     "revision": 3,
     "api": "36.1"
   },
@@ -18,10 +18,10 @@
     "qemu_revision": "9f0811e72acfc46edc39d3d0baedd796f7d03309"
   },
   "guest": {
-    "kernel": "6.12.89-android16-6-ksunext-v3.3.0",
+    "kernel": "6.12.89-android16-6-ksunext-v3.3.0-4k",
     "manager_status": "Working",
-    "syscall_hardening": "Syscall hardening: Disabled",
-    "boot_seconds": 42.9
+    "online_cpus": "0-3",
+    "boot_seconds": 24.2
   },
   "checks": {
     "cold_boot": true,
@@ -34,10 +34,11 @@
       "height": 640,
       "bytes": 737280
     },
-    "png_sha256": "348bf7d43ef0af3e748d831bd93c4b95eb443e95c42afc852777912d75c970a8",
+    "png_sha256": "800e61cfea19b6bf9d66ff3185eb3d28f15d63d97e46f472247f99be48250001",
     "snapshot_descriptor_created": true,
     "snapshot_restore_and_adb_reconnect": true
   },
   "sdk_layout": "Isolated SDK root containing platforms/ and references to the actual emulator/ and platform-tools/ directories. No substitute Google image was used.",
-  "scope": "This result establishes x86_64 image compatibility with the tested source-built engine on Linux/KVM. It does not substitute for Windows, Intel macOS or ARM64 runtime verification."
+  "diagnostic_note": "Guest CPU online is 0-3 (four CPUs). This upstream engine overcounts vmConfig.numberOfCpuCores in its diagnostic RPC; the actual guest count is recorded here.",
+  "scope": "This result establishes ARM64 image compatibility with the tested source-built engine on macOS/HVF. Windows and Intel macOS runtime testing remain separate."
 }

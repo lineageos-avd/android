@@ -170,7 +170,20 @@ def main():
                                 'emulator_version': subprocess.check_output([str(emulator), '-version'], env=env, text=True).splitlines()[0]}
                     if args.grpcurl:
                         discovery = None
-                        for candidate in runtime.rglob('*.ini'):
+                        candidates = list(runtime.rglob('*.ini'))
+                        # macOS Emulator may use its platform cache instead of
+                        # TMPDIR. Follow only this process's advertised path,
+                        # then require the exact private port and a token.
+                        cache_root = Path.home() / 'Library/Caches/TemporaryItems/avd/running'
+                        with (output / f'{abi}-emulator.log').open(errors='replace') as lines:
+                            for line in lines:
+                                if 'Advertising in: ' in line:
+                                    advertised = Path(line.split('Advertising in: ', 1)[1].strip())
+                                    if advertised.parent == cache_root and advertised.name.startswith('pid_') and advertised.suffix == '.ini':
+                                        candidates.append(advertised)
+                        for candidate in candidates:
+                            if not candidate.is_file():
+                                continue
                             fields = dict(line.split('=', 1) for line in candidate.read_text().splitlines() if '=' in line)
                             if fields.get('grpc.port') == str(grpc_port) and fields.get('grpc.token'):
                                 discovery = candidate
