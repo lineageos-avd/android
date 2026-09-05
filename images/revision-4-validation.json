@@ -70,5 +70,22 @@
     ],
     "png_sha256": "41cb7a996b589254b6e11d27408495105fc7c3971b38e0171148f66e0ee4c7cf",
     "snapshot_save_load_and_adb_reconnect": true
+  },
+  "hub_catalog_download": {
+    "abi": "arm64-v8a",
+    "api": {
+      "major": 36,
+      "minor": 1
+    },
+    "archive_properties_verified": true,
+    "archive_size": 1072142801,
+    "checksum": {
+      "algorithm": "sha256",
+      "value": "9340525e9861a7b329fe341c5dda05ef89e2ba1b05584810afa784c05598694d"
+    },
+    "revision": "4",
+    "source": "dynamic default LineageOS catalog",
+    "status": "passed",
+    "url": "https://github.com/lineageos-avd/android/releases/download/lineage-23.2-r4/lineage-23.2-api36.1-arm64-v8a.zip"
   }
 }
